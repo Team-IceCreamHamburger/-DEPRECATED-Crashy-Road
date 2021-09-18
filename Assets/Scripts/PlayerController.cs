@@ -11,6 +11,12 @@ public class PlayerController : MonoBehaviour
 
     private float hAxis;
     private float vAxis;
+    private Rigidbody playerRb;
+
+    private void Awake()
+    {
+        playerRb = GetComponent<Rigidbody>();
+    }
 
 
     void FixedUpdate()
@@ -19,7 +25,8 @@ public class PlayerController : MonoBehaviour
         hAxis = Input.GetAxis("Horizontal");
 
         // Player Move //
-        transform.Translate(Vector3.back * vAxis * moveSpeed * Time.deltaTime);
+        //transform.Translate(Vector3.back * vAxis * moveSpeed * Time.deltaTime);
+        playerRb.AddRelativeForce(Vector3.back * vAxis * moveSpeed);
 
         // Player Rotate //
         if (vAxis != 0.0f)
