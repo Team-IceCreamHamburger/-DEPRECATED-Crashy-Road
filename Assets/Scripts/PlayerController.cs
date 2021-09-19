@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,16 +7,19 @@ public class PlayerController : MonoBehaviour
 {
     public int life = 3;
 
+    [SerializeField] private GameObject centerOfMass;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
 
+    private Rigidbody playerRb;
     private float hAxis;
     private float vAxis;
-    private Rigidbody playerRb;
+
 
     private void Awake()
     {
         playerRb = GetComponent<Rigidbody>();
+        playerRb.centerOfMass = centerOfMass.transform.localPosition;
     }
 
 
@@ -32,6 +36,16 @@ public class PlayerController : MonoBehaviour
         if (vAxis != 0.0f)
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * Time.deltaTime);
+        }
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Finish")
+        {
+            gameObject.SetActive(false);
+            Debug.Log("GameOver!");
         }
     }
 }
