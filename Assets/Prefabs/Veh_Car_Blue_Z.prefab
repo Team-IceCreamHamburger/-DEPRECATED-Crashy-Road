@@ -582,7 +582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   life: 3
   centerOfMass: {fileID: 717851997}
-  moveSpeed: 30000
+  moveSpeed: 20000
   rotateSpeed: 200
 --- !u!1 &717851997
 GameObject:
