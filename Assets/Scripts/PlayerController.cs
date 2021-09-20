@@ -20,6 +20,12 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         playerRb.centerOfMass = centerOfMass.transform.localPosition;
+
+        // Wheels Torque ON //
+        foreach (WheelCollider w in GetComponentsInChildren<WheelCollider>())
+        {
+            w.motorTorque = 0.000001f;
+        }  
     }
 
 
@@ -30,10 +36,10 @@ public class PlayerController : MonoBehaviour
 
         // Player Move //
         //transform.Translate(Vector3.back * vAxis * moveSpeed * Time.deltaTime);
-        playerRb.AddRelativeForce(Vector3.back * vAxis * moveSpeed);
+        playerRb.AddRelativeForce(Vector3.forward * vAxis * moveSpeed);
 
         // Player Rotate //
-        if (vAxis != 0.0f)
+        if (playerRb.velocity.magnitude > 0.0f)
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * Time.deltaTime);
         }
@@ -42,7 +48,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Finish")
+        
+        if (other.gameObject.tag == "Finish")   // IF Player fall in the water
         {
             gameObject.SetActive(false);
             Debug.Log("GameOver!");
