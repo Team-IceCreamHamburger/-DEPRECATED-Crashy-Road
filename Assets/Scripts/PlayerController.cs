@@ -6,6 +6,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public int life = 3;
+    public int bomb = 0;
+    public bool isShield;
+    public bool isBooster;
 
     [SerializeField] private GameObject centerOfMass;
     [SerializeField] private float moveSpeed;
@@ -25,7 +28,7 @@ public class PlayerController : MonoBehaviour
         foreach (WheelCollider w in GetComponentsInChildren<WheelCollider>())
         {
             w.motorTorque = 0.000001f;
-        }  
+        }
     }
 
 
