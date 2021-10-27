@@ -38,20 +38,21 @@ public class PlayerController : MonoBehaviour
         hAxis = Input.GetAxis("Horizontal");
 
         // Player Move //
-        //transform.Translate(Vector3.back * vAxis * moveSpeed * Time.deltaTime);
         playerRb.AddRelativeForce(Vector3.forward * vAxis * moveSpeed);
 
         // Player Rotate //
+        playerRb.angularVelocity = Vector3.zero;
         if (playerRb.velocity.magnitude > 0.0f)
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * Time.deltaTime);
         }
+
+        playerRb.angularVelocity = Vector3.zero;
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        
         if (other.gameObject.tag == "Finish")   // IF Player fall in the water
         {
             gameObject.SetActive(false);
