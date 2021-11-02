@@ -34,6 +34,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        PlayerControll();
+    }
+
+
+    private void PlayerControll()
+    {
         // Axis Set //
         vAxis = Input.GetAxis("Vertical");
         hAxis = Input.GetAxis("Horizontal");
@@ -44,12 +50,10 @@ public class PlayerController : MonoBehaviour
         // Player Rotate //
         playerRb.angularVelocity = Vector3.zero;
 
-        if (playerRb.velocity.magnitude > 0.0f) // IF Car is Moving
+        if (playerRb.velocity.magnitude > 0.5f) // IF Car is Moving
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * Time.deltaTime);
         }
-
-        //playerRb.angularVelocity = Vector3.zero;
     }
 
 

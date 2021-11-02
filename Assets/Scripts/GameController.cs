@@ -4,39 +4,71 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public GameObject Enemy;
-    public Vector3[] spawnPoint;
+    public List<GameObject> enemies;
+    public GameObject enemyObj;
+    public Transform SpawnPoint;
+    public GameObject player;
+    public int poolAmount;
+    public float enemySpawnRate;
+    private bool isEntered;
 
-    [SerializeField] private float spawnRate;
 
-    private int point;
-    public bool isSpawned;
-
-
-    private void Start()
+    void Start()
     {
-        
+        // Create a new List of GameObjects for Pooling
+        enemies = new List<GameObject>();
+
+        EnemyPooler(enemyObj);
     }
 
 
-    // Update is called once per frame
     void Update()
     {
-        if (!isSpawned)
+        StartCoroutine(EnemySpawner());
+    }
+
+
+    IEnumerator EnemySpawner()
+    {
+        if (player.activeInHierarchy && !isEntered)   // If, Player is Still Alive
         {
-            point = Random.Range(0, spawnPoint.Length);
-            StartCoroutine(EnemySpawn(point));
+            isEntered = true;                                           // Coroutine Entered
+            GameObject cop = GetPooledObj();                            // Pooling
+            cop.transform.position = SpawnPoint.position;               // Cop Spawn at the Barricade Pos
+            cop.SetActive(true);
+            yield return new WaitForSeconds(enemySpawnRate);            // Cop Spawn CoolTime
+            isEntered = false;                                          // Coroutine Escape
+        }
+
+        yield return null;
+    }
+
+
+    private void EnemyPooler(GameObject poolObj)
+    {
+        // Input GameObjects into the List for pooling
+        for (int i = 0; i < poolAmount; i++)
+        {
+            GameObject obj = Instantiate(enemyObj);     // object Instantiate
+            obj.SetActive(false);
+            enemies.Add(obj);                           // List ADD
+            obj.transform.SetParent(this.transform);    // Set as child. of GameController
         }
     }
 
 
-    IEnumerator EnemySpawn(int point)
+    public GameObject GetPooledObj()
     {
-        Instantiate(Enemy, spawnPoint[point], Quaternion.identity);
-        isSpawned = true;
-        yield return new WaitForSeconds(spawnRate);
-        isSpawned = false;
+        // Search in the PooledObjects List
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            // IF, the pooled Obj. is NOT Activate, It can uses.
+            if (!enemies[i].activeInHierarchy)
+            {
+                return enemies[i];
+            }
+        }
+
+        return null;
     }
-
-
 }
