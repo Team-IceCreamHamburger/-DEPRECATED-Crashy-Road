@@ -5,96 +5,78 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private GameObject navPin;
-    [SerializeField] private GameObject player;
     [SerializeField] private int life;
     [SerializeField] private float exRotSpeed;
-
-    private NavMeshPath path;
+    
+    private GameObject player;
     private NavMeshAgent agent;
     private Rigidbody enemyRb;
+    private Vector3 velocity = Vector3.zero;
     private Vector3 lookRot;
+    private bool isStop;
+
 
 
     private void Awake()
     {
         enemyRb = GetComponent<Rigidbody>();
-        agent   = GetComponent<NavMeshAgent>();
-        
-        path = new NavMeshPath();
+        agent = GetComponent<NavMeshAgent>();
+        player = GameObject.Find("Player");
 
+        agent.updatePosition = false;
         agent.updateRotation = false;
-
     }
 
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        enemyRb.velocity = Vector3.zero;
-        enemyRb.angularVelocity = Vector3.zero;
-
-        StartCoroutine("PlayerTracking");
-
-        StartCoroutine("FallInWater");
-        
-
-        // agent move Dir
-        lookRot = agent.desiredVelocity;
-        // Quaternion cal
-        Quaternion targetAngle = Quaternion.LookRotation(lookRot);
-        // Enemy Rotate
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetAngle, Time.deltaTime * exRotSpeed);    
+        LookPlayer();
+        StartCoroutine(ChasePlayer());
     }
 
 
-    IEnumerator FallInWater()
+    private void LookPlayer()
     {
-        Ray ray;
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, Vector3.down * 1, out hit, 15))
+        if (!isStop)
         {
-            if (hit.transform.tag == "Finish")
-            {
-                agent.isStopped = true;
-                yield return new WaitForSeconds(0.2f);
-                gameObject.SetActive(false);
-            }
+            lookRot = agent.steeringTarget - gameObject.transform.position;
+            transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, Quaternion.LookRotation(lookRot), exRotSpeed * Time.deltaTime);
         }
-        yield return null;
     }
 
 
-    IEnumerator PlayerTracking()
+    IEnumerator ChasePlayer()
     {
-        agent.CalculatePath(player.transform.position, path);
-        agent.SetPath(path);
-
-        navPin.transform.position = player.transform.position;
+        if (!isStop)
+        {
+            agent.SetDestination(player.transform.position);    // agent Move
+            transform.position = Vector3.SmoothDamp(gameObject.transform.position, agent.nextPosition, ref velocity, 0.1f); // HELL YEAH!!! DAMM YOU HORRIBLE BUG, YOU FIRED!!! 'A')!!!
+        }
 
         yield return null;
     }
-    
+
+
+
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if(collision.gameObject.tag == "Player")
         {
-            Debug.Log("!");
-            agent.isStopped = true;
-            agent.velocity = Vector3.zero;
+            isStop = true;
         }
     }
 
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if(collision.gameObject.tag == "Player")
         {
-            agent.isStopped = false;
+            isStop = false;
         }
-
     }
+
+
+
 
 }
