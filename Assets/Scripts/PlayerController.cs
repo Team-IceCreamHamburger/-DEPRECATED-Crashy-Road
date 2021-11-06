@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public int bomb = 0;    // Item; Bomb Count
     public bool isShield;   // Item; Shield On/Off
     public bool isBooster;  // item; Booster On/Off
+    public bool isKilled;   // Is Player Killed?
 
     [SerializeField] private GameObject centerOfMass;
     [SerializeField] private float moveSpeed;   // Player Move Speed
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Finish")   // IF Player fall in the water; GAMEOVER!
         {
+            isKilled = true;
             gameObject.SetActive(false);
             Debug.Log("GameOver!");
         }

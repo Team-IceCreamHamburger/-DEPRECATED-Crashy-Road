@@ -70,7 +70,7 @@ public class EnemyController : MonoBehaviour
 
     private void LookPlayer()
     {
-        if (!isHit)
+        if (!isHit && player.activeSelf)
         {
             lookRot = agent.steeringTarget - gameObject.transform.position;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookRot), exRotSpeed * Time.deltaTime);
@@ -88,7 +88,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator ChasePlayer()
     {
-        if (!isHit)
+        if (!isHit && player.activeSelf)
         {
             agent.SetDestination(player.transform.position);    // agent Move
             transform.position = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f); // HELL YEAH!!! DAMM YOU HORRIBLE BUG, YOU FIRED!!! 'A')!!!
