@@ -11,9 +11,11 @@ public class GameController : MonoBehaviour
     public Transform spawnPoint;
     public float enemySpawnRate;
     public int poolAmount;
+    public int eCount;
 
     private bool isEntered;
     private AudioSource bgmPlayer;
+
 
 
     void Start()
@@ -36,7 +38,7 @@ public class GameController : MonoBehaviour
     {
         if (player.activeSelf && !isEntered)   // If, Player is Still Alive
         {
-            isEntered = true;                                           // Coroutine Entered
+            isEntered = true;                  // Coroutine Entered
 
             // Search in the PooledObjects List
             for (int i = 0; i < enemies.Count; i++)
@@ -45,13 +47,14 @@ public class GameController : MonoBehaviour
                 if (!enemies[i].activeInHierarchy)
                 {
                     GameObject cop = enemies[i];
-                    cop.transform.position = spawnPoint.position;               // Cop Spawn at the Barricade Pos
+                    cop.transform.position = spawnPoint.position;       // Cop Spawn at the Barricade Pos
                     cop.SetActive(true);
-                    yield return new WaitForSeconds(enemySpawnRate);            // Cop Spawn CoolTime
+                    eCount += 1;                                        // Enemy Count += 1
+                    yield return new WaitForSeconds(enemySpawnRate);    // Cop Spawn CoolTime
                 }
             }
 
-            isEntered = false;                                          // Coroutine Escape
+            isEntered = false;  // Coroutine Escape
         }
 
         yield return null;
@@ -78,8 +81,4 @@ public class GameController : MonoBehaviour
         bgmPlayer.clip = BGM[indx];             // BGM Audio Clip SET
         bgmPlayer.Play();                       // BGM Start
     }
-
-
-
-
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6890499671521126282}
   - component: {fileID: 6890499671521126276}
   - component: {fileID: 6890499671521126279}
-  - component: {fileID: 2026472000334471327}
+  - component: {fileID: 4399790739437509377}
   m_Layer: 0
   m_Name: COP
   m_TagString: Enemy
@@ -71,6 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   exRotSpeed: 7
+  siren: {fileID: 8300000, guid: 2c4333546f61900468fffdb0b929a9b7, type: 3}
   isHit: 0
 --- !u!54 &6890499671521126276
 Rigidbody:
@@ -101,7 +102,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 3, z: 6}
   m_Center: {x: 0, y: 1.5, z: 0}
---- !u!82 &2026472000334471327
+--- !u!82 &4399790739437509377
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,10 +113,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

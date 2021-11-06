@@ -7,22 +7,25 @@ public class EnemyController : MonoBehaviour
 {
     //[SerializeField] private int life;
     [SerializeField] private float exRotSpeed;
+    [SerializeField] private AudioClip siren;
 
+    public bool isHit;
+
+    private AudioSource sirenPlayer;
     private GameController gameController;
     private GameObject player;
     private NavMeshAgent agent;
     private Rigidbody enemyRb;
     private Vector3 velocity = Vector3.zero;
     private Vector3 lookRot;
-    public bool isHit;
-    //private int lifeTmp;
-
+    
 
     void Awake()
     {
         //lifeTmp = life;
         isHit = false;
 
+        sirenPlayer = GetComponent<AudioSource>();
         enemyRb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player");
@@ -43,18 +46,8 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         Hit();
-        //Died();
+        SirenController();
     }
-
-    /*
-    private void Hit()
-    {
-        if (isHit)
-        {
-            this.life -= 1;
-        }
-    }
-    */
 
     
     private void Hit()
@@ -62,9 +55,7 @@ public class EnemyController : MonoBehaviour
         if (isHit)
         {
             StartCoroutine(Crash());
-            //this.gameObject.SetActive(false);
         }
-        //life = lifeTmp;
     }
 
 
@@ -78,11 +69,23 @@ public class EnemyController : MonoBehaviour
     }
 
 
+    private void SirenController()
+    {
+        if (gameObject.activeSelf && !sirenPlayer.isPlaying)
+        {
+            sirenPlayer.clip = siren;
+            sirenPlayer.loop = true;
+            sirenPlayer.Play();
+        }
+    }
+
+
     IEnumerator Crash()
     {
         yield return new WaitForSeconds(gameController.enemySpawnRate);
         isHit = false;
-        this.gameObject.SetActive(false);
+        gameController.eCount -= 1;
+        this.gameObject.SetActive(false);   
     }
 
 
@@ -106,15 +109,4 @@ public class EnemyController : MonoBehaviour
             isHit = true;
         }
     }
-
-    /*
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            isHit = false;
-        }
-    }
-    */
-    
 }
