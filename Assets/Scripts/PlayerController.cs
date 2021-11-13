@@ -7,8 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     public int life = 3;    // Player Life
     public int bomb = 0;    // Item; Bomb Count
+    public int coin = 0;    // Item; Coint Count
     public bool isShield;   // Item; Shield On/Off
-    public bool isBooster;  // item; Booster On/Off
+    public bool isBooster;  // Item; Booster On/Off
     public bool isKilled;   // Is Player Killed?
 
     [SerializeField] private GameObject centerOfMass;
@@ -35,11 +36,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        PlayerControll();
+        PlayerMove();
     }
 
 
-    private void PlayerControll()
+    private void PlayerMove()
     {
         // Axis Set //
         vAxis = Input.GetAxis("Vertical");
@@ -55,6 +56,24 @@ public class PlayerController : MonoBehaviour
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * Time.deltaTime);
         }
+    }
+
+
+    public void ItemBomb()
+    {
+        // TODO
+        /*
+         * Bomb Item Effect Acti.
+        */
+    }
+
+
+    public void ItemBooster()
+    {
+        // TODO
+        /*
+         * Booster Item Effect Acti.
+        */
     }
 
 

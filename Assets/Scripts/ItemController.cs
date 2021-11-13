@@ -25,41 +25,8 @@ public class ItemController : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            Debug.Log(gameObject.name);
-
-            // Item effect acivate //
-            switch (gameObject.GetComponent<ItemController>().item)
-            {
-                case Items.Bomb:
-                    playerController.bomb += 1;
-                    Destroy(gameObject);
-                    break;
-                case Items.Booster:
-                    playerController.isBooster = true;
-                    Destroy(gameObject);
-                    break;
-                case Items.Coin:
-                    Destroy(gameObject);
-                    break;
-                case Items.Heal:
-                    if (playerController.life < 3)
-                    {
-                        playerController.life += 1;
-                        Destroy(gameObject);
-                    }
-                    break;
-                case Items.Shield:
-                    if (!playerController.isShield)
-                    {
-                        playerController.isShield = true;
-                        Destroy(gameObject);
-                    }
-                    break;
-            }
-        }
-    }
+    // TODO //
+    /*
+     * Item Random Spawn
+    */
 }
