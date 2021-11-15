@@ -12,7 +12,7 @@ public class EnemyController : MonoBehaviour
     public bool isHit;
 
     private AudioSource sirenPlayer;
-    private GameController gameController;
+    private EnemySpawner enemySpawner;
     private GameObject player;
     private NavMeshAgent agent;
     private Rigidbody enemyRb;
@@ -22,14 +22,13 @@ public class EnemyController : MonoBehaviour
 
     void Awake()
     {
-        //lifeTmp = life;
         isHit = false;
 
         sirenPlayer = GetComponent<AudioSource>();
         enemyRb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player");
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
 
         agent.updatePosition = false;
         agent.updateRotation = false;
@@ -82,9 +81,8 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator Crash()
     {
-        yield return new WaitForSeconds(gameController.enemySpawnRate);
+        yield return new WaitForSeconds(enemySpawner.enemySpawnRate);
         isHit = false;
-        gameController.eCount -= 1;
         this.gameObject.SetActive(false);   
     }
 

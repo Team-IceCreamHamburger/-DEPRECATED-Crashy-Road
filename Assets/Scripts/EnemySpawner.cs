@@ -2,39 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class EnemySpawner : MonoBehaviour
 {
-    public AudioClip[] BGM;
-    public List<GameObject> enemies;
     public GameObject enemyObj;
-    public GameObject player;
     public Transform spawnPoint;
-    public float enemySpawnRate;
     public int poolAmount;
-    public int eCount;
+    public float enemySpawnRate;
 
+    private GameObject player;
+    private List<GameObject> enemies;
     private bool isEntered;
-    private AudioSource bgmPlayer;
 
+
+    void Awake()
+    {
+        player = GameObject.Find("Player");
+        enemies = new List<GameObject>();   // Create a new List of GameObjects for Pooling
+    }
 
 
     void Start()
     {
-        bgmPlayer = GetComponent<AudioSource>();
-        enemies = new List<GameObject>();           // Create a new List of GameObjects for Pooling
-
-        EnemyPooler(enemyObj);  // Enemy Pooling
-        BGMController();        // BGM Play
+        EnemyPool(enemyObj);                // Enemy Pooling
     }
 
 
     void Update()
     {
-        StartCoroutine(EnemySpawner());     // Enemy Spawn Control
+        StartCoroutine(EnemySpawn());       // Enemy Spawn Control
     }
 
 
-    IEnumerator EnemySpawner()
+    IEnumerator EnemySpawn()
     {
         if (player.activeSelf && !isEntered)   // If, Player is Still Alive
         {
@@ -49,7 +48,6 @@ public class GameController : MonoBehaviour
                     GameObject cop = enemies[i];
                     cop.transform.position = spawnPoint.position;       // Cop Spawn at the Barricade Pos
                     cop.SetActive(true);
-                    eCount += 1;                                        // Enemy Count += 1
                     yield return new WaitForSeconds(enemySpawnRate);    // Cop Spawn CoolTime
                 }
             }
@@ -61,7 +59,7 @@ public class GameController : MonoBehaviour
     }
 
 
-    private void EnemyPooler(GameObject poolObj)
+    private void EnemyPool(GameObject poolObj)
     {
         // Input GameObjects into the List for pooling
         for (int i = 0; i < poolAmount; i++)
@@ -71,14 +69,5 @@ public class GameController : MonoBehaviour
             enemies.Add(obj);                           // List ADD
             obj.transform.SetParent(this.transform);    // Set as child. of GameController
         }
-    }
-
-
-    private void BGMController()
-    {
-        int indx = Random.Range(0, BGM.Length); // BGM index Random Select
-
-        bgmPlayer.clip = BGM[indx];             // BGM Audio Clip SET
-        bgmPlayer.Play();                       // BGM Start
     }
 }
