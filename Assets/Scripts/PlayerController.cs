@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;   // Player Move Speed
     [SerializeField] private float rotateSpeed; // Player Rotate Speed
 
+    public int topSpeed = 100;
     public int life = 3;        // Player Life
     public int coin = 0;        // Coint Count
     public int boostTimer;
@@ -21,9 +22,12 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRb;
     private ItemController itemController;
     private int boostTimerTmp;
+    private int itemIndex;
     private float speedMulti;   // Boost Item Effect
     private float hAxis;
     private float vAxis;
+    private float currentSpeed = 0;
+    private float pitch = 0;
     private bool isCoEntered;
     private Item item;
 
@@ -49,6 +53,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         PlayerMove();
+        EngineSound();
     }
 
 
@@ -71,26 +76,35 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    private void EngineSound()
+    {
+        currentSpeed = playerRb.velocity.magnitude * 3.6f;
+        pitch = currentSpeed / topSpeed;
+
+        transform.GetComponent<AudioSource>().pitch = pitch;
+    }
+
+
     private void ItemGet(Item item)
     {
         switch (item)
         {
             case Item.Bomb:
-                Debug.Log("DEL point Index: " + itemController.pointIndex);
+                //Debug.Log("DEL point Index: " + itemController.pointIndex);
                 isBombGet = true;   // Bomb Get
-                itemController.isPointFull[itemController.pointIndex] = false;  // Item Spawn Point Reset
+                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
                 break;
 
             case Item.Booster:
-                Debug.Log("DEL point Index: " + itemController.pointIndex);
+                //Debug.Log("DEL point Index: " + itemController.pointIndex);
                 isBoosterGet = true;   // Bomb Get
-                itemController.isPointFull[itemController.pointIndex] = false;  // Item Spawn Point Reset
+                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
                 break;
 
             case Item.Coin:
-                Debug.Log("DEL point Index: " + itemController.pointIndex);
+                //Debug.Log("DEL point Index: " + itemController.pointIndex);
                 isCoinGet = true;   // Bomb Get
-                itemController.isPointFull[itemController.pointIndex] = false;  // Item Spawn Point Reset
+                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
                 break;
         }
     }
@@ -195,18 +209,21 @@ public class PlayerController : MonoBehaviour
         {
             case "Item_Bomb(Clone)":
                 Debug.Log("Bomb GET!");
+                itemIndex = other.GetComponent<ItemIndex>().index;
                 ItemGet(Item.Bomb);      // Bomb GET
                 Destroy(other.gameObject);
                 break;
 
             case "Item_Booster(Clone)":
                 Debug.Log("Booster GET!");
+                itemIndex = other.GetComponent<ItemIndex>().index;
                 ItemGet(Item.Booster);   // Booster GET
                 Destroy(other.gameObject);
                 break;
 
             case "Item_Coin(Clone)":
                 Debug.Log("Coin GET!");
+                itemIndex = other.GetComponent<ItemIndex>().index;
                 ItemGet(Item.Coin);      // Coin GET
                 Destroy(other.gameObject);
                 break;

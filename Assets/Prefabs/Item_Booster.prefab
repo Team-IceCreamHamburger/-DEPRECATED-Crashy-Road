@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5402655495178080739}
   - component: {fileID: 5379985497589214614}
   - component: {fileID: 5379985497589214612}
+  - component: {fileID: 2763587729720583038}
   m_Layer: 0
   m_Name: Item_Booster
   m_TagString: Item
@@ -109,3 +110,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
+--- !u!114 &2763587729720583038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5381124299108270115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed33294c73a2f4e48a896d97c922ceca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
