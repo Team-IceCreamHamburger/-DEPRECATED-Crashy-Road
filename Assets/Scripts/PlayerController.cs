@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody playerRb;
     private ItemController itemController;
+    private UIController uiController;
     private int boostTimerTmp;
     private int itemIndex;
     private float speedMulti;   // Boost Item Effect
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         itemController = GameObject.Find("ItemController").GetComponent<ItemController>();
+        uiController = GameObject.Find("UIController").GetComponent<UIController>();
 
         playerRb.centerOfMass = centerOfMass.transform.localPosition;
 
@@ -200,8 +202,8 @@ public class PlayerController : MonoBehaviour
         // IF Player fall in the water; GAMEOVER! //
         if (other.gameObject.tag == "Finish")   
         {
+            uiController.GameOver();
             gameObject.SetActive(false);
-            Debug.Log("GameOver!");
         }
 
         // IF, Player Get The Item //
@@ -229,14 +231,4 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

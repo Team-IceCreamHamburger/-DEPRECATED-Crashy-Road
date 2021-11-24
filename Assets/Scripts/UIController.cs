@@ -2,30 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
+
 
 public class UIController : MonoBehaviour
 {
+    public AudioMixer mixer;
     public GameObject pauseWin;
     public GameObject overWin;
     public GameObject dChkWin;
+    
 
-
-    public void Awake()
+    void Awake()
     {
+        SetVol("master", 1f);       // Game Audio ON
         pauseWin.SetActive(false);
         overWin.SetActive(false);
         dChkWin.SetActive(false);
     }
 
+    
+    private void SetVol(string mixerTg, float val)
+    {
+        mixer.SetFloat(mixerTg, Mathf.Log10(val) * 20);
+    }
+
 
     public void GamePause()
     {
-        /* // TODO //
-         * Audio Volume Mute
-        */ // END TODO END //
-
-        Time.timeScale = 0;     // Game Pause ON
         pauseWin.SetActive(true);
+        Time.timeScale = 0;             // Game Pause ON
+        SetVol("master", 0.0001f);      // Game Audio OFF
+    }
+
+
+    public void Close()
+    {
+        pauseWin.SetActive(false);
+        Time.timeScale = 1;             // Game Pause OFF
+        SetVol("master", 1f);           // Game Audio ON
     }
 
 
@@ -48,45 +63,32 @@ public class UIController : MonoBehaviour
 
     public void Quit()
     {
-        Application.Quit();
+        DoubleCheck();
     }
 
 
-    public void Close()
+    private void DoubleCheck()
     {
-        /* // TODO //
-         * Pause Window Close
-        */ // END TODO END //
-
-        Time.timeScale = 1;
+        dChkWin.SetActive(true);
     }
 
 
     public void YES()
     {
-        /* // TODO //
-         * Yes Button Logic Implement
-        */ // END TODO END //
+        Application.Quit();
     }
 
 
     public void NO()
     {
-        /* // TODO //
-         * NO Button Logic Implement
-        */ // END TODO END //
+        dChkWin.SetActive(false);
     }
 
 
     public void GameOver()
     {
-        Time.timeScale = 0;
         overWin.SetActive(true);
-    }
-
-
-    public void DoubleCheck()
-    {
-        dChkWin.SetActive(true);
+        Time.timeScale = 0;             // Game Pause ON
+        SetVol("master", 0.0001f);      // Game Audio OFF
     }
 }
