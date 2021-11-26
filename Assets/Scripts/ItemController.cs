@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Item
 {
@@ -20,6 +21,9 @@ public class ItemController : MonoBehaviour
     public int boostTime;
     public int coin;
     public bool[] isPointFull;
+    public Image gaugeBar;
+    public GameObject player;
+    public GameObject[] itemsIMG;
     public GameObject[] Items;
     public GameObject[] ItemSpawnPoints;
 
@@ -27,16 +31,15 @@ public class ItemController : MonoBehaviour
     private int starTimeTmp;
     private int boostTimeTmp;
     private int itemIndex;
-    private GameObject player;
+    private AudioSource itemGetAudio;
     private PlayerController playerController;
 
 
 
     void Awake()
     {
-        player = GameObject.Find("Player");
         playerController = player.GetComponent<PlayerController>();
-
+        itemGetAudio = GetComponent<AudioSource>();
         isPointFull = new bool[ItemSpawnPoints.Length];
 
         spawnTimeTmp = spawnTime;
@@ -73,42 +76,57 @@ public class ItemController : MonoBehaviour
     }
 
 
-    IEnumerator ItemStarEf()
-    {
-        playerController.isStarGet = true;
-
-        while(starTime > 0)         // Timer IN
-        {
-            starTime -= 1;
-            yield return new WaitForSeconds(1);
-        }
-
-        starTime = starTimeTmp;     // Time OUT
-
-        playerController.isStarGet = false;
-    }
-
-
     IEnumerator ItemBoosterEf()
     {
         playerController.isBoosterGet = true;
 
-        while(boostTime > 0)        // Timer IN
+        itemGetAudio.Play();
+        itemsIMG[0].SetActive(true);
+        playerController.speedMulti = 2;    // BOOST ON
+
+        while(boostTime > 0)        // Timer Start
         {
             boostTime -= 1;
             yield return new WaitForSeconds(1);
         }
 
-        boostTime = boostTimeTmp;   // Timer OUT
+        boostTime = boostTimeTmp;   // Timer End
+
+        itemsIMG[0].SetActive(false);
+        playerController.speedMulti = 1;    // BOOST OFF
 
         playerController.isBoosterGet = false;
     }
 
-     
+
+    IEnumerator ItemStarEf()
+    {
+        playerController.isStarGet = true;
+        
+        itemGetAudio.Play();
+        itemsIMG[1].SetActive(true);
+        gaugeBar.color = new Color(0.8666667f, 0.854902f, 0);
+
+        while (starTime > 0)         // Timer Start
+        {
+            starTime -= 1;
+            yield return new WaitForSeconds(1);
+        }
+
+        starTime = starTimeTmp;     // Time End
+
+        itemsIMG[1].SetActive(false);
+        gaugeBar.color = new Color(0, 0.8666667f, 0.05882353f);
+
+        playerController.isStarGet = false;
+    }
+
+
     private void ItemCoinEf()
     {
         playerController.isCoinGet = true;
 
+        itemGetAudio.Play();
         playerController.score += coin;
 
         playerController.isCoinGet = false;

@@ -5,11 +5,9 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    //[SerializeField] private int life;
-    [SerializeField] private float exRotSpeed;
     [SerializeField] private AudioClip siren;
-
-    public bool isHit;
+    [SerializeField] private int cooltime;
+    [SerializeField] private float exRotSpeed;
 
     private AudioSource sirenPlayer;
     private EnemySpawner enemySpawner;
@@ -20,7 +18,9 @@ public class EnemyController : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private Vector3 lookRot;
     private int hitCount;
-    
+    private bool isHit;
+
+
 
     void Awake()
     {
@@ -84,7 +84,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator Crash()
     {
-        yield return new WaitForSeconds(enemySpawner.enemySpawnRate);
+        yield return new WaitForSeconds(cooltime);
         isHit = false;
         this.gameObject.SetActive(false);   
     }

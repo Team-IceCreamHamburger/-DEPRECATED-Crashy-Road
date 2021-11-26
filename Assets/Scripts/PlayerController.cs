@@ -8,12 +8,11 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [HideInInspector] public GameObject centerOfMass;
-    [HideInInspector] public GameObject bombObj;
+    [HideInInspector] public float speedMulti;          // Boost Item Effect
 
     public Text scoreText;
     public int life;            // Player Life
     public int score;           // Score Count
-    public int boostTimer;
     public float moveSpeed;     // Player Move Speed
     public float rotateSpeed;   // Player Rotate Speed
     public bool isStarGet;      // Item; Is Player Get the Star?
@@ -21,14 +20,12 @@ public class PlayerController : MonoBehaviour
     public bool isCoinGet;      // Item; Is Player Get the Coin?
     public bool isCatching;
 
-    private Item item;
+    //private Item item;
     private Rigidbody playerRb;
     private ItemController itemController;
     private UIController uiController;
-    private int boostTimerTmp;
     private int itemIndex;
     private int topSpeed = 100;
-    private float speedMulti;   // Boost Item Effect
     private float hAxis;
     private float vAxis;
     private float currentSpeed = 0;
@@ -47,7 +44,6 @@ public class PlayerController : MonoBehaviour
         isCatching = false;
 
         speedMulti = 1;
-        boostTimerTmp = boostTimer;
 
         // Wheels Torque ON //
         foreach (WheelCollider w in GetComponentsInChildren<WheelCollider>())
@@ -114,9 +110,9 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
+            scoreText.text = string.Format("{0}", score);
             yield return new WaitForSeconds(1);
             score += 1;
-            scoreText.text = string.Format("{0:D9}", score);
         }
     }
 

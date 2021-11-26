@@ -8,13 +8,14 @@ public class PlayerCatching : MonoBehaviour
     public int catchingTimeStep;
 
 
+
     void FixedUpdate()
     {
         gameObject.transform.position = player.transform.position;
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         // IF COPs Enter in the Player's Catching area //
         if (other.gameObject.tag == "Enemy" && !player.isCatching && !player.isStarGet)

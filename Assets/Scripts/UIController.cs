@@ -14,6 +14,7 @@ public class UIController : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 1;
         SetVol("master", 1f);       // Game Audio ON
         pauseWin.SetActive(false);
         overWin.SetActive(false);
@@ -46,17 +47,13 @@ public class UIController : MonoBehaviour
     public void Retry()
     {
         Time.timeScale = 1;             // Game Pause OFF
-        SceneManager.LoadScene(0);      // Game Scene Re-Load
+        SceneManager.LoadScene(1);      // Game Scene Re-Load
     }
 
 
     public void Title()
     {
-        /* // TODO //
-         * Add Title Scene
-        */ // END TODO END //
-
-        SceneManager.LoadScene(1);      // Title Scene Load
+        SceneManager.LoadScene(0);      // Title Scene Load
     }
 
 
