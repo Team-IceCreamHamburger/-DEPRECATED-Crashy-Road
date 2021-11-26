@@ -14,22 +14,25 @@ public class EnemyController : MonoBehaviour
     private AudioSource sirenPlayer;
     private EnemySpawner enemySpawner;
     private GameObject player;
+    private PlayerController playerController;
     private NavMeshAgent agent;
     private Rigidbody enemyRb;
     private Vector3 velocity = Vector3.zero;
     private Vector3 lookRot;
+    private int hitCount;
     
 
     void Awake()
     {
-        isHit = false;
-
         sirenPlayer = GetComponent<AudioSource>();
         enemyRb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
 
+        isHit = false;
+        hitCount = 0;
         agent.updatePosition = false;
         agent.updateRotation = false;
     }
@@ -103,7 +106,8 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            Debug.Log("CRASH!!");
+            hitCount += 1;
+            //Debug.Log("Hit Count: " + hitCount);
             isHit = true;
         }
     }

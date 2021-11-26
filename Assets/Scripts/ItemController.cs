@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum Item
 {
-    Bomb,
+    Star,
     Booster,
     Coin
 }
@@ -16,28 +16,104 @@ public class ItemController : MonoBehaviour
 
     public Item spawnItem;
     public int spawnTime;
+    public int starTime;
+    public int boostTime;
+    public int coin;
     public bool[] isPointFull;
     public GameObject[] Items;
     public GameObject[] ItemSpawnPoints;
-    
 
-    private GameObject player;
     private int spawnTimeTmp;
+    private int starTimeTmp;
+    private int boostTimeTmp;
     private int itemIndex;
+    private GameObject player;
+    private PlayerController playerController;
+
 
 
     void Awake()
     {
         player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
+
         isPointFull = new bool[ItemSpawnPoints.Length];
+
         spawnTimeTmp = spawnTime;
+        starTimeTmp = starTime;
+        boostTimeTmp = boostTime;
     }
+
 
     void Start()
     {
         StartCoroutine(ItemRandomSpawn());
     }
 
+
+    public void ItemGet(Item item, int itemIndex)
+    {
+        switch (item)
+        {
+            case Item.Star:
+                StartCoroutine(ItemStarEf());       // Star Get
+                isPointFull[itemIndex] = false;     // Item Spawn Point Reset
+                break;
+
+            case Item.Booster:
+                StartCoroutine(ItemBoosterEf());    // Booster Get
+                isPointFull[itemIndex] = false;     // Item Spawn Point Reset
+                break;
+
+            case Item.Coin:
+                ItemCoinEf();       // Coin Get
+                isPointFull[itemIndex] = false;  // Item Spawn Point Reset
+                break;
+        }
+    }
+
+
+    IEnumerator ItemStarEf()
+    {
+        playerController.isStarGet = true;
+
+        while(starTime > 0)         // Timer IN
+        {
+            starTime -= 1;
+            yield return new WaitForSeconds(1);
+        }
+
+        starTime = starTimeTmp;     // Time OUT
+
+        playerController.isStarGet = false;
+    }
+
+
+    IEnumerator ItemBoosterEf()
+    {
+        playerController.isBoosterGet = true;
+
+        while(boostTime > 0)        // Timer IN
+        {
+            boostTime -= 1;
+            yield return new WaitForSeconds(1);
+        }
+
+        boostTime = boostTimeTmp;   // Timer OUT
+
+        playerController.isBoosterGet = false;
+    }
+
+     
+    private void ItemCoinEf()
+    {
+        playerController.isCoinGet = true;
+
+        playerController.score += coin;
+
+        playerController.isCoinGet = false;
+    }
+    
 
     IEnumerator ItemRandomSpawn()
     {
@@ -50,7 +126,6 @@ public class ItemController : MonoBehaviour
 
                 if (!isPointFull[pointIndex])   // If Empty, Item Spawn at Point
                 {
-                    Debug.Log("point Index: " + pointIndex);
                     isPointFull[pointIndex] = true;
                     itemIndex = Random.Range(0, System.Enum.GetValues(typeof(Item)).Length);   // Item Random Select
                     Instantiate(Items[itemIndex], ItemSpawnPoints[pointIndex].transform.position, Quaternion.identity);

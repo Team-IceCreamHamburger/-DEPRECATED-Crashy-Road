@@ -11,7 +11,6 @@ public class UIController : MonoBehaviour
     public GameObject pauseWin;
     public GameObject overWin;
     public GameObject dChkWin;
-    
 
     void Awake()
     {
@@ -21,7 +20,7 @@ public class UIController : MonoBehaviour
         dChkWin.SetActive(false);
     }
 
-    
+
     private void SetVol(string mixerTg, float val)
     {
         mixer.SetFloat(mixerTg, Mathf.Log10(val) * 20);

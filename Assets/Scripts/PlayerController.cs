@@ -2,35 +2,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PlayerController : MonoBehaviour
 {
     [HideInInspector] public GameObject centerOfMass;
     [HideInInspector] public GameObject bombObj;
 
-    [SerializeField] private float moveSpeed;   // Player Move Speed
-    [SerializeField] private float rotateSpeed; // Player Rotate Speed
-
-    public int topSpeed = 100;
-    public int life = 3;        // Player Life
-    public int coin = 0;        // Coint Count
+    public Text scoreText;
+    public int life;            // Player Life
+    public int score;           // Score Count
     public int boostTimer;
-    public bool isBombGet;      // Item; Is Player Get the Bomb?
+    public float moveSpeed;     // Player Move Speed
+    public float rotateSpeed;   // Player Rotate Speed
+    public bool isStarGet;      // Item; Is Player Get the Star?
     public bool isBoosterGet;   // Item; Is Player Get the Booster?
     public bool isCoinGet;      // Item; Is Player Get the Coin?
+    public bool isCatching;
 
+    private Item item;
     private Rigidbody playerRb;
     private ItemController itemController;
     private UIController uiController;
     private int boostTimerTmp;
     private int itemIndex;
+    private int topSpeed = 100;
     private float speedMulti;   // Boost Item Effect
     private float hAxis;
     private float vAxis;
     private float currentSpeed = 0;
     private float pitch = 0;
-    private bool isCoEntered;
-    private Item item;
+    
 
 
     private void Awake()
@@ -40,6 +43,8 @@ public class PlayerController : MonoBehaviour
         uiController = GameObject.Find("UIController").GetComponent<UIController>();
 
         playerRb.centerOfMass = centerOfMass.transform.localPosition;
+
+        isCatching = false;
 
         speedMulti = 1;
         boostTimerTmp = boostTimer;
@@ -52,12 +57,24 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    void Start()
+    {
+        StartCoroutine(ScoreCount());
+    }
+
+
     void FixedUpdate()
     {
         PlayerMove();
         EngineSound();
     }
 
+
+    private void PlayerDeath()
+    {
+        uiController.GameOver();
+        gameObject.SetActive(false);
+    }
 
     private void PlayerMove()
     {
@@ -75,6 +92,12 @@ public class PlayerController : MonoBehaviour
         {
             transform.Rotate(Vector3.up * hAxis * rotateSpeed * speedMulti * Time.deltaTime);
         }
+
+        // Player Death //
+        if (life <= 0)
+        {
+            PlayerDeath();
+        }
     }
 
 
@@ -87,113 +110,14 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void ItemGet(Item item)
+    IEnumerator ScoreCount()
     {
-        switch (item)
+        while (true)
         {
-            case Item.Bomb:
-                //Debug.Log("DEL point Index: " + itemController.pointIndex);
-                isBombGet = true;   // Bomb Get
-                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
-                break;
-
-            case Item.Booster:
-                //Debug.Log("DEL point Index: " + itemController.pointIndex);
-                isBoosterGet = true;   // Bomb Get
-                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
-                break;
-
-            case Item.Coin:
-                //Debug.Log("DEL point Index: " + itemController.pointIndex);
-                isCoinGet = true;   // Bomb Get
-                itemController.isPointFull[itemIndex] = false;  // Item Spawn Point Reset
-                break;
-        }
-    }
-
-
-    private void ItemUse()
-    {
-        // If, Player Has The Item; Bomb, Booster, Coin //
-        if (isBombGet)
-        {
-            ItemBombEf();
-        }
-
-        if (isBoosterGet)
-        {
-            ItemBoosterEf();
-        }
-
-        if (isCoinGet)
-        {
-            ItemCoinEF();
-        }
-    }
-
-
-    private void ItemCoinEF()
-    {
-        isCoinGet = false;
-
-        this.coin += 1;
-
-        // TODO //
-        /*
-         * UI Update
-         * SFX Play
-        */
-    }
-
-
-
-    private void ItemBombEf()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))    // Bomb Set on the player's pos.
-        {
-            isBombGet = false;
-            //Instantiate(bombObj, gameObject.transform.position, Quaternion.identity);
-        }
-
-        // TODO //
-        /*
-         * UI Update
-         * SFX Play
-        */
-    }
-
-
-    private void ItemBoosterEf()
-    {
-        speedMulti = 2;     // Speed UP
-
-        if (!isCoEntered)
-        {
-            StartCoroutine(BoostTimer());
-        }
-
-        // TODO //
-        /*
-         * UI Update
-         * SFX Play
-        */
-    }
-
-
-    IEnumerator BoostTimer()
-    {
-        isCoEntered = true;
-
-        while (boostTimer >= 0)
-        {
-            boostTimer -= 1;
             yield return new WaitForSeconds(1);
+            score += 1;
+            scoreText.text = string.Format("{0:D9}", score);
         }
-
-        speedMulti = 1;     // Speed Reset
-        isBoosterGet = false;
-
-        isCoEntered = false;
     }
 
 
@@ -202,31 +126,27 @@ public class PlayerController : MonoBehaviour
         // IF Player fall in the water; GAMEOVER! //
         if (other.gameObject.tag == "Finish")   
         {
-            uiController.GameOver();
-            gameObject.SetActive(false);
+            PlayerDeath();
         }
 
         // IF, Player Get The Item //
-        switch (other.gameObject.name)   // Item Get
+        switch (other.gameObject.name)
         {
-            case "Item_Bomb(Clone)":
-                Debug.Log("Bomb GET!");
+            case "Item_Star(Clone)":
                 itemIndex = other.GetComponent<ItemIndex>().index;
-                ItemGet(Item.Bomb);      // Bomb GET
+                itemController.ItemGet(Item.Star, itemIndex);      // Bomb GET
                 Destroy(other.gameObject);
                 break;
 
             case "Item_Booster(Clone)":
-                Debug.Log("Booster GET!");
                 itemIndex = other.GetComponent<ItemIndex>().index;
-                ItemGet(Item.Booster);   // Booster GET
+                itemController.ItemGet(Item.Booster, itemIndex);   // Booster GET
                 Destroy(other.gameObject);
                 break;
 
             case "Item_Coin(Clone)":
-                Debug.Log("Coin GET!");
                 itemIndex = other.GetComponent<ItemIndex>().index;
-                ItemGet(Item.Coin);      // Coin GET
+                itemController.ItemGet(Item.Coin, itemIndex);      // Coin GET
                 Destroy(other.gameObject);
                 break;
         }
