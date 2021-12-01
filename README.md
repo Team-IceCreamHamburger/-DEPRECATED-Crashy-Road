@@ -21,7 +21,7 @@ You can take various Items like Star, Coin and Booster.
 
 Every seconds, You will getting scores.
 
-And if you stuck cause of Police, You will WASTED!
+And if you stuck because of Police, You will ARREST!
 
 GOOD LUCK! and Have FUN! 'ㅁ')b
 
