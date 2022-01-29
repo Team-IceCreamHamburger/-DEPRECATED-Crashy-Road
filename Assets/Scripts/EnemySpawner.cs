@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyObj;
+    public GameObject[] enemyObj;
     public Transform spawnPoint;
-    public int poolAmount;
+    public GameObject player;
+    private List<GameObject> enemies;
     public float enemySpawnRate;
 
-    private GameObject player;
-    private List<GameObject> enemies;
     private bool isEntered;
+    private int poolAmount;
+    
+
+
+    private void Init()
+    {
+        enemies = new List<GameObject>();   // Create a new List of GameObjects for Pooling
+        isEntered = false;
+        poolAmount = 30;
+    }
 
 
     void Awake()
     {
-        player = GameObject.Find("Player");
-        enemies = new List<GameObject>();   // Create a new List of GameObjects for Pooling
+        Init();
     }
 
 
     void Start()
     {
-        EnemyPool(enemyObj);                // Enemy Pooling
+        EnemyPool(enemyObj[0]);                // Enemy Pooling
     }
 
 
@@ -64,7 +72,7 @@ public class EnemySpawner : MonoBehaviour
         // Input GameObjects into the List for pooling
         for (int i = 0; i < poolAmount; i++)
         {
-            GameObject obj = Instantiate(enemyObj);     // object Instantiate
+            GameObject obj = Instantiate(enemyObj[0]);     // object Instantiate
             obj.SetActive(false);
             enemies.Add(obj);                           // List ADD
             obj.transform.SetParent(this.transform);    // Set as child. of GameController

@@ -3,44 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 
 public class UIController : MonoBehaviour
 {
-    public AudioMixer mixer;
-    public GameObject pauseWin;
-    public GameObject overWin;
-    public GameObject dChkWin;
+    public static UIController instance;
 
-    void Awake()
+    public GameObject gamePauseWin;
+    public GameObject gameOverWin;
+    public GameObject doubleCheckWin;
+    public GameObject[] itemsIMG;
+    public Image gaugeBar;
+
+
+
+    private void Init() 
     {
+        if (instance == null) 
+        {
+            instance = this;
+        }
+
         Time.timeScale = 1;
-        SetVol("master", 1f);       // Game Audio ON
-        pauseWin.SetActive(false);
-        overWin.SetActive(false);
-        dChkWin.SetActive(false);
+        
+
+        gamePauseWin.SetActive(false);
+        gameOverWin.SetActive(false);
+        doubleCheckWin.SetActive(false);
     }
 
 
-    private void SetVol(string mixerTg, float val)
+    void Awake()
     {
-        mixer.SetFloat(mixerTg, Mathf.Log10(val) * 20);
+        Init();
+    }
+
+
+    public void ItemIcon(Item item, bool active) 
+    {
+        itemsIMG[(int)item].SetActive(active);
+    }
+
+
+    public void StarGauge(Color color) 
+    {
+        gaugeBar.color = color;
     }
 
 
     public void GamePause()
     {
-        pauseWin.SetActive(true);
+        gamePauseWin.SetActive(true);
         Time.timeScale = 0;             // Game Pause ON
-        SetVol("master", 0.0001f);      // Game Audio OFF
+        BGMController.instance.SetVol("master", 0.0001f);      // Game Audio OFF
     }
 
 
     public void Close()
     {
-        pauseWin.SetActive(false);
+        gamePauseWin.SetActive(false);
         Time.timeScale = 1;             // Game Pause OFF
-        SetVol("master", 1f);           // Game Audio ON
+        BGMController.instance.SetVol("master", 1f);           // Game Audio ON
     }
 
 
@@ -65,7 +89,7 @@ public class UIController : MonoBehaviour
 
     private void DoubleCheck()
     {
-        dChkWin.SetActive(true);
+        doubleCheckWin.SetActive(true);
     }
 
 
@@ -77,14 +101,14 @@ public class UIController : MonoBehaviour
 
     public void NO()
     {
-        dChkWin.SetActive(false);
+        doubleCheckWin.SetActive(false);
     }
 
 
     public void GameOver()
     {
-        overWin.SetActive(true);
+        gameOverWin.SetActive(true);
         Time.timeScale = 0;             // Game Pause ON
-        SetVol("master", 0.0001f);      // Game Audio OFF
+        BGMController.instance.SetVol("master", 0.0001f);      // Game Audio OFF
     }
 }

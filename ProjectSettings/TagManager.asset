@@ -4,8 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Item
   - Enemy
+  - Item_Booster
+  - Item_Coin
+  - Item_Star
   layers:
   - Default
   - TransparentFX

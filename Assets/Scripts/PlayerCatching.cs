@@ -4,23 +4,35 @@ using UnityEngine;
 
 public class PlayerCatching : MonoBehaviour
 {
-    public PlayerController player;
     public int catchingTimeStep;
+    public bool isCatching;     // Is Player Catching?
 
 
-
+    /*
     void FixedUpdate()
     {
-        gameObject.transform.position = player.transform.position;
+        gameObject.transform.position = PlayerController.instance.gameObject.transform.position;
+    }
+    */
+
+
+    private void Init() 
+    {
+        isCatching = false;
+    }
+
+
+    void Awake() {
+        Init();
     }
 
 
     private void OnTriggerStay(Collider other)
     {
         // IF COPs Enter in the Player's Catching area //
-        if (other.gameObject.tag == "Enemy" && !player.isCatching && !player.isStarGet)
+        if (other.gameObject.tag == "Enemy" && !isCatching && !PlayerController.instance.isStarGet)
         {
-            player.isCatching = true;
+            isCatching = true;
             StartCoroutine(Catching());
         }
     }
@@ -29,9 +41,9 @@ public class PlayerCatching : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         // If Player has escaping to the COP //
-        if (other.gameObject.tag == "Enemy" && player.isCatching)
+        if (other.gameObject.tag == "Enemy" && isCatching)
         {
-            player.isCatching = false;
+            isCatching = false;
             StartCoroutine(Catching());
         }
     }
@@ -39,15 +51,15 @@ public class PlayerCatching : MonoBehaviour
 
     IEnumerator Catching()
     {
-        while (player.isCatching && player.life >= catchingTimeStep)
+        while (isCatching && PlayerController.instance.life >= catchingTimeStep)
         {
-            player.life -= catchingTimeStep;
+            PlayerController.instance.life -= catchingTimeStep;
             yield return new WaitForSeconds(1);
         }
 
-        while (!player.isCatching && player.life <= (100 - catchingTimeStep))
+        while (!isCatching && PlayerController.instance.life <= (100 - catchingTimeStep))
         {
-            player.life += catchingTimeStep;
+            PlayerController.instance.life += catchingTimeStep;
             yield return new WaitForSeconds(3);
         }
     }

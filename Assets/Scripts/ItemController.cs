@@ -5,72 +5,84 @@ using UnityEngine.UI;
 
 public enum Item
 {
-    Star,
     Booster,
-    Coin
+    Coin,
+    Star
 }
 
 
 public class ItemController : MonoBehaviour
 {
-    [HideInInspector] public int pointIndex;
+    public static ItemController instance;
 
-    public Item spawnItem;
-    public int spawnTime;
-    public int starTime;
-    public int boostTime;
-    public int coin;
-    public bool[] isPointFull;
-    public Image gaugeBar;
-    public GameObject player;
-    public GameObject[] itemsIMG;
+    //public Item spawnItem;
     public GameObject[] Items;
     public GameObject[] ItemSpawnPoints;
+    public int itemSpawnCoolTime;
+    public int starTime;
+    public int boostTime;
+    public int coinTime;
+    
 
-    private int spawnTimeTmp;
+    private AudioSource itemSFX;
+    private int coinScore;
+    private int itemSpawnCoolTimeTmp;
     private int starTimeTmp;
     private int boostTimeTmp;
+    private int coinTimeTmp;
     private int itemIndex;
-    private AudioSource itemGetAudio;
-    private PlayerController playerController;
+    private int pointIndex;
+    private int randomPointIndex;
+    private bool[] isPointFull;
 
 
-
-    void Awake()
+    private void Init() 
     {
-        playerController = player.GetComponent<PlayerController>();
-        itemGetAudio = GetComponent<AudioSource>();
+        if (instance == null) 
+        {
+            instance = this;
+        }
+
+        itemSFX = gameObject.GetComponent<AudioSource>();
         isPointFull = new bool[ItemSpawnPoints.Length];
 
-        spawnTimeTmp = spawnTime;
+        itemSpawnCoolTimeTmp = itemSpawnCoolTime;
         starTimeTmp = starTime;
         boostTimeTmp = boostTime;
-    }
+        coinTimeTmp = coinTime;
 
-
-    void Start()
-    {
         StartCoroutine(ItemRandomSpawn());
     }
 
 
-    public void ItemGet(Item item, int itemIndex)
+    void Awake()
+    {
+        Init();
+    }
+
+
+    public void SetPointIndex(int index) {
+        pointIndex = index;
+    }
+
+
+    public void ItemGet(Item item)
     {
         switch (item)
         {
-            case Item.Star:
-                StartCoroutine(ItemStarEf());       // Star Get
-                isPointFull[itemIndex] = false;     // Item Spawn Point Reset
-                break;
-
             case Item.Booster:
                 StartCoroutine(ItemBoosterEf());    // Booster Get
-                isPointFull[itemIndex] = false;     // Item Spawn Point Reset
+                isPointFull[pointIndex] = false;     // Item Spawn Point Reset
                 break;
 
             case Item.Coin:
-                ItemCoinEf();       // Coin Get
-                isPointFull[itemIndex] = false;  // Item Spawn Point Reset
+                StartCoroutine(ItemCoinEf());       // Coin Get
+                isPointFull[pointIndex] = false;     // Item Spawn Point Reset
+                break;
+
+            case Item.Star:
+                StartCoroutine(ItemStarEf());       // Star Get
+                isPointFull[pointIndex] = false;     // Item Spawn Point Reset
                 break;
         }
     }
@@ -78,11 +90,11 @@ public class ItemController : MonoBehaviour
 
     IEnumerator ItemBoosterEf()
     {
-        playerController.isBoosterGet = true;
+        UIController.instance.ItemIcon(Item.Booster, true);
+        PlayerController.instance.isItemGet = true;
 
-        itemGetAudio.Play();
-        itemsIMG[0].SetActive(true);
-        playerController.speedMulti = 2;    // BOOST ON
+        itemSFX.Play();
+        PlayerController.instance.speedMulti = 2;
 
         while(boostTime > 0)        // Timer Start
         {
@@ -92,20 +104,42 @@ public class ItemController : MonoBehaviour
 
         boostTime = boostTimeTmp;   // Timer End
 
-        itemsIMG[0].SetActive(false);
-        playerController.speedMulti = 1;    // BOOST OFF
+        PlayerController.instance.speedMulti = 1;
 
-        playerController.isBoosterGet = false;
+        PlayerController.instance.isItemGet = false;
+        UIController.instance.ItemIcon(Item.Booster, false);
+    }
+
+
+    IEnumerator ItemCoinEf()
+    {
+        UIController.instance.ItemIcon(Item.Coin, true);
+        PlayerController.instance.isItemGet = true;
+
+        itemSFX.Play();
+        PlayerController.instance.score += coinScore;
+
+        while(coinTime > 0)        // Timer Start
+        {
+            coinTime -= 1;
+            yield return new WaitForSeconds(1);
+        }
+
+        coinTime = coinTimeTmp;   // Timer End
+
+        PlayerController.instance.isItemGet = false;
+        UIController.instance.ItemIcon(Item.Coin, false);
     }
 
 
     IEnumerator ItemStarEf()
-    {
-        playerController.isStarGet = true;
-        
-        itemGetAudio.Play();
-        itemsIMG[1].SetActive(true);
-        gaugeBar.color = new Color(0.8666667f, 0.854902f, 0);
+    {   
+        UIController.instance.ItemIcon(Item.Star, true);   
+        PlayerController.instance.isItemGet = true;
+
+        itemSFX.Play();
+        PlayerController.instance.isStarGet = true;
+        UIController.instance.StarGauge(new Color(0.8666667f, 0.854902f, 0));
 
         while (starTime > 0)         // Timer Start
         {
@@ -115,45 +149,35 @@ public class ItemController : MonoBehaviour
 
         starTime = starTimeTmp;     // Time End
 
-        itemsIMG[1].SetActive(false);
-        gaugeBar.color = new Color(0, 0.8666667f, 0.05882353f);
+        PlayerController.instance.isStarGet = false;
+        UIController.instance.StarGauge(new Color(0, 0.8666667f, 0.05882353f));
 
-        playerController.isStarGet = false;
+        PlayerController.instance.isItemGet = false;
+        UIController.instance.ItemIcon(Item.Star, false);  
     }
 
-
-    private void ItemCoinEf()
-    {
-        playerController.isCoinGet = true;
-
-        itemGetAudio.Play();
-        playerController.score += coin;
-
-        playerController.isCoinGet = false;
-    }
-    
 
     IEnumerator ItemRandomSpawn()
     {
         while (true)
         {
-            if (spawnTime <= 0)     // Time OUT; Item Spawn
+            if (itemSpawnCoolTime <= 0)     // Time OUT; Item Spawn
             {
                 // Item Random Select && Spawn //
-                pointIndex = Random.Range(0, ItemSpawnPoints.Length);   // Spawn Point Check; Is Point Empty?
+                randomPointIndex = Random.Range(0, ItemSpawnPoints.Length);   // Spawn Point Check; Is Point Empty?
 
-                if (!isPointFull[pointIndex])   // If Empty, Item Spawn at Point
+                if (!isPointFull[randomPointIndex])   // If Empty, Item Spawn at Point
                 {
-                    isPointFull[pointIndex] = true;
+                    isPointFull[randomPointIndex] = true;
                     itemIndex = Random.Range(0, System.Enum.GetValues(typeof(Item)).Length);   // Item Random Select
-                    Instantiate(Items[itemIndex], ItemSpawnPoints[pointIndex].transform.position, Quaternion.identity);
+                    Instantiate(Items[itemIndex], ItemSpawnPoints[randomPointIndex].transform.position, Quaternion.identity).GetComponent<ItemIndex>().index = randomPointIndex;
                 }
 
-                spawnTime = spawnTimeTmp;   // Spawn Timer Reset
+                itemSpawnCoolTime = itemSpawnCoolTimeTmp;   // Spawn Timer Reset
             }
             else
             {
-                spawnTime -= 1;
+                itemSpawnCoolTime -= 1;
                 yield return new WaitForSeconds(1);
             }
         }
