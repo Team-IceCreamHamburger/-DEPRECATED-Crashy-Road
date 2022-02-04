@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
-public class TitleSceneController : MonoBehaviour
+
+public class TitleScene : MonoBehaviour
 {
     public GameObject gameLogo;
     public GameObject dChkWin;
@@ -20,13 +21,13 @@ public class TitleSceneController : MonoBehaviour
         titles[idx].SetActive(true);
     }
 
-
+    
     public void GameStart()
     {
         buttonSFX.Play();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("CarSelect");
     }
-
+    
 
     public void HowToPlay()
     {
@@ -35,11 +36,13 @@ public class TitleSceneController : MonoBehaviour
         howWin.SetActive(true);
     }
 
+
     public void GameQuit()
     {
         buttonSFX.Play();
         DoubleCheck();
     }
+
 
     private void DoubleCheck()
     {
