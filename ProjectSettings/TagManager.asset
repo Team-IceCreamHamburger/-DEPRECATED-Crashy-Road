@@ -8,6 +8,8 @@ TagManager:
   - Item_Booster
   - Item_Coin
   - Item_Star
+  - Launch
+  - CommingSoon
   layers:
   - Default
   - TransparentFX

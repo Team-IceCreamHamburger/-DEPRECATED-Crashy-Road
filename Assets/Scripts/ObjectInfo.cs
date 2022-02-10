@@ -21,16 +21,4 @@ public class ObjectInfo : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);      
     }
-
-
-    public void playerSet() 
-    {
-        player = Preview.instance.getCar();
-    }
-
-
-    public void mapSet() 
-    {
-        map = Preview.instance.getMap();
-    }
 }

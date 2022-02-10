@@ -11,15 +11,4 @@ public class SelectScene : MonoBehaviour
         SceneManager.LoadScene(scene);
     }
 
-
-    /*
-    public void ToLevel() {
-        SceneManager.LoadScene("LevelSelect");
-    }
-
-
-    public void BackToMenu() {
-        SceneManager.LoadScene("Title");
-    }
-    */
 }

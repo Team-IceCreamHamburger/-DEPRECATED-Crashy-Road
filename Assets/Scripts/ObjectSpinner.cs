@@ -7,9 +7,16 @@ public class ObjectSpinner : MonoBehaviour
     [SerializeField] private float speed;
 
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Awake() {
+        ObjSpin(this.speed);
+    }
+
+
+    void Update() {
+        ObjSpin(this.speed);    
+    }
+
+    void ObjSpin(float speed) {
         gameObject.transform.Rotate(Vector3.up * speed * Time.deltaTime);
     }
 }
