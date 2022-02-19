@@ -14,12 +14,14 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isItemGet;
     [HideInInspector] public bool isStarGet;      // Item; Is Player Get the Star?    
 
-    public Text scoreText;
     public int life;            // Player Life
     public int score;           // Score Count
     public float moveSpeed;     // Player Move Speed
     public float rotateSpeed;   // Player Rotate Speed
-    
+
+    public int catchingTimeStep;
+    public bool isCatching = false;
+
     private Rigidbody playerRb;
     private int itemIndex;
     private int topSpeed = 100;
@@ -27,7 +29,6 @@ public class PlayerController : MonoBehaviour
     private float vAxis;
     private float currentSpeed = 0;
     private float pitch = 0;
-    
 
 
     private void Init() 
@@ -37,7 +38,8 @@ public class PlayerController : MonoBehaviour
             instance = this;
         }
 
-        isItemGet = false;
+        isItemGet = false;  // Item Reset
+        isCatching = false;
 
         playerRb = gameObject.GetComponent<Rigidbody>();
         playerRb.centerOfMass = centerOfMass.transform.localPosition;
@@ -48,9 +50,7 @@ public class PlayerController : MonoBehaviour
         foreach (WheelCollider w in GetComponentsInChildren<WheelCollider>())
         {
             w.motorTorque = 0.000001f;
-        }
-
-        StartCoroutine(ScoreCount());
+        }        
     }
 
 
@@ -104,23 +104,6 @@ public class PlayerController : MonoBehaviour
 
         transform.GetComponent<AudioSource>().pitch = pitch;
     }
-
-
-    // TODO //
-    /* 
-    * WHAY IS IT HERE??
-    * Move to UIController
-    */
-    IEnumerator ScoreCount()
-    {
-        while (true)
-        {
-            scoreText.text = string.Format("{0}", score);
-            yield return new WaitForSeconds(1);
-            score += 1;
-        }
-    }
-    // TODO //
 
 
     private void ItemGetted(Item item, Collider other) 

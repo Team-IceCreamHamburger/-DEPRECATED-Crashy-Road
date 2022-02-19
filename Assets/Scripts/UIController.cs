@@ -15,6 +15,8 @@ public class UIController : MonoBehaviour
     public GameObject doubleCheckWin;
     public GameObject[] itemsIMG;
     public Image gaugeBar;
+    public Image gaugeBarMask;
+    public Text scoreText;
 
 
 
@@ -26,7 +28,6 @@ public class UIController : MonoBehaviour
         }
 
         Time.timeScale = 1;
-        
 
         gamePauseWin.SetActive(false);
         gameOverWin.SetActive(false);
@@ -38,6 +39,31 @@ public class UIController : MonoBehaviour
     {
         Init();
     }
+
+
+    void Start()
+    {
+        StartCoroutine(ScoreCount());
+    }
+
+
+    IEnumerator ScoreCount()
+    {
+        while (true)
+        {
+            instance.scoreText.text = string.Format("{0}", PlayerController.instance.score);
+            yield return new WaitForSeconds(1);
+            PlayerController.instance.score += 1;
+        }
+    }
+    // TODO //
+
+
+    void Update() 
+    {
+        gaugeBarMask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (PlayerController.instance.life * 4.8f));
+    }
+
 
 
     public void ItemIcon(Item item, bool active) 
