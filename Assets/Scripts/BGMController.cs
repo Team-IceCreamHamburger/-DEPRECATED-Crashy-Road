@@ -14,6 +14,7 @@ public class BGMController : MonoBehaviour
 
 
 
+
     private void Init() 
     {
         if (instance == null) {
@@ -50,7 +51,4 @@ public class BGMController : MonoBehaviour
         bgmPlayer.clip = BGM[indx];             // BGM Audio Clip SET
         bgmPlayer.Play();                       // BGM Start
     }
-
-
-    
 }

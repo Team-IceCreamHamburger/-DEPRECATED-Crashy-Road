@@ -5,14 +5,14 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private AudioClip siren;
+    [SerializeField] private AudioClip[] sirenSFX;
     [SerializeField] private int cooltime;
     [SerializeField] private float exRotSpeed;
 
     private AudioSource sirenPlayer;
     private EnemySpawner enemySpawner;
     private GameObject player;
-    private PlayerController playerController;
+
     private NavMeshAgent agent;
     private Rigidbody enemyRb;
     private Vector3 velocity = Vector3.zero;
@@ -21,25 +21,32 @@ public class EnemyController : MonoBehaviour
     private bool isHit;
 
 
-
-    void Awake()
+    private void Init()
     {
-        sirenPlayer = GetComponent<AudioSource>();
-        enemyRb = GetComponent<Rigidbody>();
-        agent = GetComponent<NavMeshAgent>();
-        player = GameObject.Find("Player");
-        playerController = player.GetComponent<PlayerController>();
-        enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+        sirenPlayer = gameObject.GetComponent<AudioSource>();
+        enemyRb = gameObject.GetComponent<Rigidbody>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
 
-        isHit = false;
+        player = PlayerController.instance.gameObject;
+        enemySpawner = EnemySpawner.instance;
+
         hitCount = 0;
+        isHit = false;
+        
         agent.updatePosition = false;
         agent.updateRotation = false;
     }
 
 
-    void FixedUpdate()
+    void Start()
     {
+        Init();
+    }
+
+
+    void FixedUpdate()
+    {   
+        Debug.Log(agent.speed);
         LookPlayer();
         StartCoroutine(ChasePlayer());
     }
@@ -48,7 +55,7 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         Hit();
-        SirenController();
+        SirenController(0);
     }
 
     
@@ -71,11 +78,11 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    private void SirenController()
+    private void SirenController(int index)
     {
         if (gameObject.activeSelf && !sirenPlayer.isPlaying)
         {
-            sirenPlayer.clip = siren;
+            sirenPlayer.clip = sirenSFX[index]; // DEFAULT Siren SFX
             sirenPlayer.loop = true;
             sirenPlayer.Play();
         }
@@ -107,7 +114,6 @@ public class EnemyController : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             hitCount += 1;
-            //Debug.Log("Hit Count: " + hitCount);
             isHit = true;
         }
     }

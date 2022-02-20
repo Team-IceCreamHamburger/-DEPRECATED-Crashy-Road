@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    public static EnemySpawner instance;
+
     public GameObject[] enemyObj;
     public Transform spawnPoint;
     public GameObject player;
@@ -17,6 +19,11 @@ public class EnemySpawner : MonoBehaviour
 
     private void Init()
     {
+        if (instance == null) 
+        {
+            instance = this;
+        }
+
         enemies = new List<GameObject>();   // Create a new List of GameObjects for Pooling
         isEntered = false;
         poolAmount = 30;

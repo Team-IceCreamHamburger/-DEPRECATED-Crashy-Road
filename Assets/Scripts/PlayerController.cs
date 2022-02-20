@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     public int score;           // Score Count
     public float moveSpeed;     // Player Move Speed
     public float rotateSpeed;   // Player Rotate Speed
-
     public int catchingTimeStep;
     public bool isCatching = false;
 
@@ -102,7 +101,7 @@ public class PlayerController : MonoBehaviour
         currentSpeed = playerRb.velocity.magnitude * 3.6f;
         pitch = currentSpeed / topSpeed;
 
-        transform.GetComponent<AudioSource>().pitch = pitch;
+        gameObject.GetComponent<AudioSource>().pitch = pitch;
     }
 
 
