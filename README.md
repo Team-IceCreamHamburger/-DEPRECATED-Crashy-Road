@@ -15,7 +15,7 @@ W A S D: Player Control
 
 Game Role is REALLY Simmmmmmple. 
 
-**Run away from the Polices as longer as you can!**
+**Run away from the Police as longer as you can!**
 
 You can take various Items like Star, Coin and Booster.
 
